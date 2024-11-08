@@ -8,12 +8,32 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword   # ルートユーザーのパスワード
-      MYSQL_DATABASE: othello_db         # 自動で作成されるデータベース名
-      MYSQL_USER: othello_user           # カスタムユーザー名
-      MYSQL_PASSWORD: userpassword       # カスタムユーザーのパスワード
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: othello_db
+      MYSQL_USER: othello_user
+      MYSQL_PASSWORD: userpassword
     volumes:
-      - db_data:/var/lib/mysql           # データの永続化用ボリューム
+      - db_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: othello_backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: othello_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
 volumes:
   db_data:
